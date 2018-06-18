@@ -43,20 +43,17 @@ int main(int argc, char** argv)
 	}
 
 	board_print_degree(board);
-	//State *state_1 = board_get_state(board);
-
-	//board_shoot(board, 2, 1);
-	//board_shoot(board, 1, 1);
-	//board_shoot(board, 2, 1);
-	//board_shoot(board, 1, 1);
-	//
-	//board_print_degree(board);
-	//
-	//board_set_state(board, state_1);
-	//
-	//board_print_degree(board);
-
-	board_print_ships(board);
-
+	State *state_1 = board_get_state(board);
+	board_shoot(board, 2, 1);
+	board_shoot(board, 1, 1);
+	board_shoot(board, 2, 1);
+	board_shoot(board, 1, 1);
+	
+	board_print_degree(board);
+	
+	board_set_state(board, state_1);
+	
+	board_print_degree(board);
+	board_print_asteroids(board);
 	return 0;
 }

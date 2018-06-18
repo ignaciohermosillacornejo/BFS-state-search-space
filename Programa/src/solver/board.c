@@ -157,7 +157,7 @@ void board_shoot(Board *board, int row, int col)
         exit(1);
     }
 }
-/*
+
 State *board_get_state(Board *board)//, State * parent, int parent_x, int parent_y)
 {
     State * state = malloc(sizeof(State));
@@ -191,7 +191,7 @@ void board_set_state(Board *board, State * state)
         board->asteroids[i]->degree = arraylist_get(state->asteroids, i);
     }
 }
-*/
+
 /* Create our board and return a pointer to our object */
 Board *board_init(int height, int width)
 {
@@ -200,6 +200,8 @@ Board *board_init(int height, int width)
     board->width = width;
     board->total_ships = 0;
     board->total_asteroids = 0;
+    board->count_ships = 0;
+    board->count_asteroids = 0;
     /* We allocate enough memory for the cells in our board
      * we store a simple array of pointers and use basic arithmetic two get the correct cell
      */
@@ -246,12 +248,14 @@ void board_set_degree(Board *board, int row, int col, int degree)
         cell->degree = degree;
         board->ships[board->total_ships] = cell;
         board->total_ships += 1;
+        board->count_ships += 1;
     }
     else if (degree == 4)
     {
         cell->degree = degree;
-        //board->asteroids[board->total_asteroids] = cell;
+        board->asteroids[board->total_asteroids] = cell;
         board->total_asteroids += 1;
+        board->count_asteroids += 1;
     }
     else if (degree == 5)
     {
