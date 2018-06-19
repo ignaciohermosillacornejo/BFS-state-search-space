@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include "board.h"
+#include "queue.h"
 
 #define MIN(A, B) (((A) < (B)) ? (A) : (B))
 #define MAX(A, B) (((A) > (B)) ? (A) : (B))
@@ -113,7 +114,8 @@ void board_destroy_asteroid(Board *board, Cell *cell)
     board->count_asteroids -= 1;
 }
 
-void board_shoot_direction(Board *board, Cell *cell, int direction)
+/* Helper function to get the consecuence of shooting in a particular direction */
+bool board_shoot_direction(Board *board, Cell *cell, int direction)
 {
     Cell *target_cell = board_get_neighbour(board, cell, direction);
     while (target_cell)
@@ -121,23 +123,23 @@ void board_shoot_direction(Board *board, Cell *cell, int direction)
         if (target_cell->degree <= 3)
         {
             board_rotate_ship(board, target_cell);
-            return;
+            return true;
         }
         else if (target_cell->degree == 4)
         {
             board_destroy_asteroid(board, target_cell);
-            board->total_asteroids -= 1;
-            return;
+            return true;
         }
         else
         {
             target_cell = board_get_neighbour(board, target_cell, direction);
         }
     }
+    return false;
 }
 
-/* Helper funcion, returns a neighbour based on the cell and and int */
-void board_shoot(Board *board, int row, int col)
+/* Main function to shoot from a given ship and change state */
+bool board_shoot(Board *board, Cell * cell)
 {
     /* The idea is to always call this function to transition states
     * 0: shoot up
@@ -145,10 +147,10 @@ void board_shoot(Board *board, int row, int col)
     * 2: shoot down
     * 3: shoot left
     */
-    Cell *cell = board_get_cell(board, row, col);
+    //Cell *cell = board_get_cell(board, row, col);
     if (cell->degree >= 0 && cell->degree <= 3)
     {
-        board_shoot_direction(board, cell, cell->degree);
+        return board_shoot_direction(board, cell, cell->degree);
     }
     else
     {
@@ -158,15 +160,15 @@ void board_shoot(Board *board, int row, int col)
     }
 }
 
-State *board_get_state(Board *board)//, State * parent, int parent_x, int parent_y)
+State *board_get_state(Board *board, State * parent, int parent_x, int parent_y)
 {
     State * state = malloc(sizeof(State));
     state->ships = arraylist_init();
     state->asteroids = arraylist_init();
     state->count_asteroids = board->count_asteroids;
-    //state->parent = parent;
-    //state->parent_x = parent_x;
-    //state->parent_y = parent_y;
+    state->parent = parent;
+    state->parent_x = parent_x;
+    state->parent_y = parent_y;
 
     for (int i = 0; i < board->total_ships; i++)
     {
@@ -186,7 +188,7 @@ void board_set_state(Board *board, State * state)
     {
         board->ships[i]->degree = arraylist_get(state->ships, i);
     }
-    for (int i = 0; i < board->total_ships; i++)
+    for (int i = 0; i < board->total_asteroids; i++)
     {
         board->asteroids[i]->degree = arraylist_get(state->asteroids, i);
     }
@@ -200,7 +202,6 @@ Board *board_init(int height, int width)
     board->width = width;
     board->total_ships = 0;
     board->total_asteroids = 0;
-    board->count_ships = 0;
     board->count_asteroids = 0;
     /* We allocate enough memory for the cells in our board
      * we store a simple array of pointers and use basic arithmetic two get the correct cell
@@ -248,7 +249,6 @@ void board_set_degree(Board *board, int row, int col, int degree)
         cell->degree = degree;
         board->ships[board->total_ships] = cell;
         board->total_ships += 1;
-        board->count_ships += 1;
     }
     else if (degree == 4)
     {

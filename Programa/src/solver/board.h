@@ -1,11 +1,9 @@
 #pragma once
-#include "arraylist.h"
+#include <stdbool.h>
+#include "queue.h"
 
 typedef struct board Board;
 typedef struct cell Cell;
-typedef struct state State;
-
-
 
 struct board
 {
@@ -13,7 +11,6 @@ struct board
     int height;
     int total_ships;
     int total_asteroids;
-    int count_ships;
     int count_asteroids;
     Cell *ships[1000]; // array of pointers to our ships
     Cell *asteroids[1000]; // array of pointers to our asteroids
@@ -28,20 +25,13 @@ struct cell
     int degree; // From 0 to 5
 };
 
-/* State to hold  */
-struct state
-{
-    ArrayList * ships;
-    ArrayList * asteroids;
-    int count_asteroids;
-    State * parent;
-};
+
 
 /* Board creation and destruction */
 Board *board_init(int height, int width);
 void board_destroy(Board *board); 
-void board_shoot(Board * board, int row, int col);
-State * board_get_state(Board *board);
+bool board_shoot(Board * board, Cell * cell);
+State * board_get_state(Board *board, State * state, int x, int y);
 void board_set_state(Board *board, State * state);
 /* Setters and getters for our board */
 int  board_get_degree        (Board *board, int row, int col             );

@@ -1,6 +1,59 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "board.h"
+#include "queue.h"
+
+void print_answer(State * state)
+{
+	if (state->parent)
+	{
+		print_answer(state->parent);
+		printf("%d,%d\n", state->parent_x, state->parent_y);
+	}
+}
+
+
+void bfs(Board * board)
+{
+	Queue * queue = queue_init();
+
+	int count = 0;
+	
+	queue_push(queue, board_get_state(board, NULL, -1, -1));
+
+	while (queue->first)
+	{
+		State * current_state = queue_pop(queue);
+		if (current_state->count_asteroids == 0)
+		{
+			printf("number of states: %d\n", count);
+			print_answer(current_state);
+			break;
+		}
+		//board_set_state(board, current_state);
+
+		for (int i = 0; i < board->total_ships; i++)
+		{
+			board_set_state(board, current_state);
+			if(board_shoot(board, board->ships[i]))
+			{
+				queue_push(queue, board_get_state(board, current_state, board->ships[i]->col, board->ships[i]->row));
+			}
+			count += 1;
+		}
+
+
+		if (count > 100000)
+		{
+			printf("Count reached\n");
+			break;
+		}
+	}
+
+
+	queue_destroy(queue);
+}
+
 
 int main(int argc, char** argv)
 {
@@ -42,18 +95,6 @@ int main(int argc, char** argv)
 		}
 	}
 
-	board_print_degree(board);
-	State *state_1 = board_get_state(board);
-	board_shoot(board, 2, 1);
-	board_shoot(board, 1, 1);
-	board_shoot(board, 2, 1);
-	board_shoot(board, 1, 1);
-	
-	board_print_degree(board);
-	
-	board_set_state(board, state_1);
-	
-	board_print_degree(board);
-	board_print_asteroids(board);
+	bfs(board);  
 	return 0;
 }
