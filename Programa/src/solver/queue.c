@@ -1,6 +1,7 @@
 #include "queue.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 /* Queue class created based on the solution to "actividad 01" from this course
  * and heavily modified
  */

@@ -4,7 +4,7 @@
 //#include <stdio.h>
 
 /* Helper function to double an array */
-void duplicate(ArrayList* list)
+void arraylist_duplicate(ArrayList* list)
 {
   // New array with double the size
   int* new_array = malloc(sizeof(int) * 2 * list -> size);
@@ -48,7 +48,7 @@ void arraylist_append(ArrayList* list, int element)
   if (list -> count == list -> size)
   // Duplico la memoria si estoy lleno
   {
-    duplicate(list);
+    arraylist_duplicate(list);
   }
   // Guardo el elemento
   list -> array[list -> count] = element;
@@ -62,7 +62,7 @@ void arraylist_insert(ArrayList* list, int element, int position)
   // Array is full, then we increase the array size before
   if (list -> size == list -> count)
   {
-    duplicate(list);
+    arraylist_duplicate(list);
   }
 
   // Elements to the right of the position to insert, are shifted right
