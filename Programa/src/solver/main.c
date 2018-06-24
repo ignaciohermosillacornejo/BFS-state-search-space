@@ -25,9 +25,9 @@ void bfs(Board * board)
 	while (queue->first)
 	{
 		State * current_state = queue_pop(queue);
+		count += 1;
 		if (current_state->count_asteroids == 0)
 		{
-			//printf("number of states: %d\n", count);
 			print_answer(current_state);
 			hashtable_destroy(hash);
 			break;
@@ -43,12 +43,9 @@ void bfs(Board * board)
 				{
 					queue_push(queue, new_state);
 				}
-				count += 1;
 			}
 		}
 	}
-
-
 	queue_destroy(queue);
 }
 

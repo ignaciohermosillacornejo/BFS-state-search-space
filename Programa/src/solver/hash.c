@@ -28,10 +28,30 @@ unsigned long long hashtable_get_key(Hashtable * hashtable, State *value)
     return key % hashtable->size;
 }
 
+void hashtable_print_state(State * value)
+{
+    printf("Asteroids: %d\n", value->count_asteroids);
+    printf("Ships: ");
+    for (int i = 0; i < value->ships->count; i++)
+    {
+        printf("%d ", arraylist_get(value->ships, i));
+    }
+    printf("\nAsteroids: ");
+    for (int i = 0; i < value->asteroids->count; i++)
+    {
+        printf("%d ", arraylist_get(value->asteroids, i));
+    }
+    printf("\n");
+}
+
 
 /* Helper function to compare if two states are equal or not */
 bool hashtable_compare(State *state_a, State *state_b)
 {
+    if (state_a == NULL || state_b == NULL)
+    {
+        return false;
+    }
     if (state_a->count_asteroids != state_b->count_asteroids)
     {
         return false;
@@ -83,6 +103,8 @@ Hashtable *hashtable_init(int total_ships, int total_asteroids)
     // Return the pointer to our new array
     return hashtable;
 }
+
+
 /* Inserts a new value into the hash table, 
  * returns true if it isn't on the table, false otherwise
  * */
@@ -90,7 +112,6 @@ bool hashtable_insert(Hashtable * hashtable, State *value)
 {
     unsigned long long key = hashtable_get_key(hashtable, value);
     Hashnode * node = hashtable->array + key;
-    return true;
     if (node->key == -1)
     {
         node->key = key;
@@ -99,11 +120,18 @@ bool hashtable_insert(Hashtable * hashtable, State *value)
     }
     else
     {
-        return false;
-        if (!hashtable_compare(value, node->value))
+        while(!hashtable_compare(value, node->value))
         {
-            printf("Colision!\n");
+            if (node->key == -1)
+            {
+
+                node->key = key;
+                node->value = value;
+                return true;
+            }
+            node++;
         }
+        return false;
     }
 }
 
