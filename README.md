@@ -1,5 +1,5 @@
 # Assignment N3
-Course IIC2133 @ PUC (2010-1) - Data structures and algorithms 
+Course IIC2133 @ PUC (2018-1) - Data structures and algorithms 
 
 A C implementation of a BFS aproach to a State search space problem utilizing a zobrist hash. It still run's slow do to errors in the handling of collisions on my hash table so only tests 0, 1 and 2 complete in a reasonable time
 
